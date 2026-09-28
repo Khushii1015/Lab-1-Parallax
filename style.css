@@ -1,409 +1,242 @@
-/* =========================================================
-   The Climb — scrolling story
-   Layers (z-index):  scene 0  →  content 1  →  UI 10
-   ========================================================= */
-
-:root {
-  --ink: #ffffff;
-  --muted: rgba(255, 255, 255, 0.78);
-  --accent: #ffb347;
-  --glass: rgba(12, 16, 38, 0.38);
-  --glass-border: rgba(255, 255, 255, 0.16);
-  --font-display: Georgia, "Times New Roman", serif;
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+/* ===== Basic setup ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-*,
-*::before,
-*::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
-  font-family: var(--font-body);
-  color: var(--ink);
-  background: #0b1026;
-  line-height: 1.6;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
   overflow-x: hidden;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
 }
 
-h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.1; }
-
-.eyebrow {
-  font-size: 0.8rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 1rem;
+h1, h2 {
+  font-family: "Trebuchet MS", sans-serif;
 }
 
-.card {
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.defs { position: absolute; }
-
-/* ---------- Accessibility ---------- */
-.skip-link {
-  position: fixed; top: -100px; left: 1rem; z-index: 100;
-  background: #fff; color: #111; padding: 0.6rem 1rem; border-radius: 8px;
-  transition: top 0.2s;
-}
-.skip-link:focus { top: 1rem; }
-
-a:focus-visible, button:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 4px;
-}
-
-/* ---------- Progress bar ---------- */
-.progress {
-  position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 50;
-  background: rgba(255, 255, 255, 0.12);
-}
-.progress__bar {
-  height: 100%;
-  background: linear-gradient(90deg, #ffd76a, #ff7e5f);
-  transform-origin: left center;
-  transform: scaleX(0);
-}
-
-/* =========================================================
-   FIXED SCENE
-   ========================================================= */
-.scene {
-  position: fixed; inset: 0; z-index: 0;
-  overflow: hidden; pointer-events: none;
-}
-
-.sky { position: absolute; inset: 0; }
-.sky--dawn  { background: linear-gradient(#1b1f4b 0%, #5b4585 40%, #e8927c 78%, #ffd6a5 100%); }
-.sky--day   { background: linear-gradient(#2f7fd8 0%, #7fbdf2 55%, #d7ecff 100%); opacity: 0; }
-.sky--dusk  { background: linear-gradient(#2b1d4f 0%, #a8466b 50%, #ff9a5a 88%); opacity: 0; }
-.sky--night { background: linear-gradient(#02040f 0%, #0b1233 60%, #1a2150 100%); opacity: 0; }
-
-.stars { position: absolute; inset: 0; opacity: 0; }
-.star {
-  position: absolute;
-  background: #fff;
-  border-radius: 50%;
-  animation: twinkle var(--t, 3s) ease-in-out infinite alternate;
-}
-@keyframes twinkle { from { opacity: 0.2; } to { opacity: 1; } }
-
-.sun, .moon {
-  position: absolute; top: 0; left: 0;
-  border-radius: 50%;
-  will-change: transform, opacity;
-}
-.sun {
-  width: 110px; height: 110px;
-  background: radial-gradient(circle, #fff7d1 0%, #ffd76a 50%, #ff9f43 100%);
-  box-shadow: 0 0 80px 30px rgba(255, 190, 90, 0.45);
-}
-.moon {
-  width: 70px; height: 70px; opacity: 0;
-  background: radial-gradient(circle at 35% 35%, #ffffff, #d8def0 60%, #aab3cf);
-  box-shadow: 0 0 60px 12px rgba(200, 215, 255, 0.35);
-}
-
-/* Clouds: outer element moves with scroll (JS), inner element bobs (CSS animation) */
-.cloud {
-  position: absolute; top: var(--top); left: 0;
-  will-change: transform;
-}
-.cloud__inner {
-  width: 220px; height: 60px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 60px;
+section {
   position: relative;
-  filter: blur(1px);
-  animation: bob 6s ease-in-out infinite alternate;
-}
-.cloud__inner::before,
-.cloud__inner::after {
-  content: ""; position: absolute; background: inherit; border-radius: 50%;
-}
-.cloud__inner::before { width: 90px; height: 90px; top: -45px; left: 35px; }
-.cloud__inner::after  { width: 120px; height: 110px; top: -60px; left: 95px; }
-.cloud--small .cloud__inner { transform: scale(0.6); }
-@keyframes bob { from { translate: 0 0; } to { translate: 0 -12px; } }
-
-.mountain {
-  position: absolute; bottom: 0; left: -5%;
-  width: 110%; height: 55vh;
-  will-change: transform;
-}
-.mountain--far   { fill: #6f6aa0; height: 62vh; }
-.mountain--mid   { fill: #4b4a7c; }
-.mountain--near  { fill: #2f2f58; height: 45vh; }
-.mountain--front { fill: #181a35; height: 30vh; }
-
-/* =========================================================
-   CONTENT
-   ========================================================= */
-main, .hero, .footer { position: relative; z-index: 1; }
-
-/* ---------- Hero ---------- */
-.hero {
-  height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center; padding: 0 1.5rem;
-}
-.hero__content { will-change: transform, opacity; }
-.hero__title {
-  font-size: clamp(3.5rem, 12vw, 9rem);
-  letter-spacing: -0.02em;
-  animation: rise 1.4s var(--ease-out) both;
-}
-.hero__subtitle {
-  font-size: clamp(1rem, 2.2vw, 1.35rem);
-  color: var(--muted);
-  max-width: 34ch; margin: 1rem auto 0;
-  animation: rise 1.4s 0.25s var(--ease-out) both;
-}
-.hero .eyebrow { animation: rise 1.4s 0.1s var(--ease-out) both; }
-@keyframes rise {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.scroll-hint {
-  position: absolute; bottom: 2.5rem;
-  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
-  font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
-}
-.scroll-hint__mouse {
-  width: 24px; height: 38px; border: 2px solid #fff; border-radius: 14px;
-  display: flex; justify-content: center; padding-top: 6px;
-}
-.scroll-hint__mouse span {
-  width: 4px; height: 8px; background: #fff; border-radius: 2px;
-  animation: wheel 1.6s ease-in-out infinite;
-}
-@keyframes wheel {
-  0%   { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(12px); opacity: 0; }
-}
-
-/* ---------- Pinned (sticky) sections ---------- */
-/* JS writes --p (0 → 1) = how far you've scrolled through the section */
-.pin { position: relative; --p: 0; }
-.pin__sticky {
-  position: sticky; top: 0;
-  height: 100vh;
-  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
   overflow: hidden;
-  padding: 0 1.5rem;
 }
 
-/* Chapter 1: word reveal */
-.pin--words { height: 260vh; }
-.chapter-intro { max-width: 900px; text-align: center; }
-.words {
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 4vw, 3rem);
-  line-height: 1.35;
+/* ===== Background layers ===== */
+/* The sky is always there. The space layer and stars fade in as you scroll (see script.js) */
+.sky,
+.space,
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
-.words span {
-  opacity: 0.15;
-  display: inline-block;
-  transform: translateY(8px);
-  transition: opacity 0.4s ease, transform 0.4s var(--ease-out), color 0.4s;
-}
-.words span.lit { opacity: 1; transform: translateY(0); }
 
-/* Chapter 2: forest parts */
-.pin--forest { height: 280vh; }
-.forest__text {
-  max-width: 560px; text-align: center; z-index: 1;
-  opacity: calc(var(--p) * 2.2 - 0.3);
-  transform: scale(calc(0.85 + var(--p) * 0.15)) translateY(calc((1 - var(--p)) * 40px));
+.sky {
+  background: linear-gradient(#4a90e2, #a7d3f5);
+  z-index: -3;
 }
-.forest__text h2 { font-size: clamp(2.4rem, 6vw, 4.5rem); margin-bottom: 1rem; }
-.forest__text p:last-child { color: var(--muted); font-size: 1.1rem; }
 
-.trees {
-  position: absolute; bottom: 0;
-  width: 60%; height: 95vh;
+.space {
+  background: linear-gradient(#000010, #0d0d35);
+  opacity: 0;
+  z-index: -2;
+}
+
+.stars {
+  /* small white dots made with radial gradients */
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, white, transparent),
+    radial-gradient(2px 2px at 150px 80px, white, transparent),
+    radial-gradient(1px 1px at 90px 150px, white, transparent),
+    radial-gradient(2px 2px at 200px 190px, white, transparent),
+    radial-gradient(1px 1px at 260px 40px, white, transparent);
+  background-size: 300px 220px;
+  opacity: 0;
+  z-index: -1;
+}
+
+/* ===== Progress bar ===== */
+#progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 0%;
+  background: orange;
+  z-index: 10;
+}
+
+/* ===== Section 1: Launch ===== */
+.title {
+  font-size: 60px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 20px;
+  margin-bottom: 200px;
+}
+
+#rocket {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  width: 90px;
+  margin-left: -45px;
   z-index: 2;
-  overflow: visible;
-  will-change: transform;
-}
-.trees--left  { left: -5%;  transform: translateX(calc(var(--p) * -85%)); }
-.trees--right { right: -5%; transform: translateX(calc(var(--p) * 85%)) scaleX(-1); }
-.pine-dark { fill: #0e2a25; }
-.pine-mid  { fill: #174035; }
-
-/* Chapter 3: horizontal ridge */
-.pin--ridge { height: 420vh; }
-.ridge { flex-direction: column; justify-content: center; padding: 0; }
-.ridge__label { position: absolute; top: 12vh; left: 50%; transform: translateX(-50%); white-space: nowrap; }
-.ridge__track {
-  --max: 0;
-  display: flex; gap: 4vw;
-  padding: 0 10vw;
-  align-self: flex-start;
-  will-change: transform;
-  transform: translateX(calc(var(--p) * var(--max) * -1px));
-}
-.checkpoint {
-  flex: 0 0 min(78vw, 400px);
-  padding: 2rem;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: transform 0.4s var(--ease-out), border-color 0.4s;
-}
-.checkpoint:hover { transform: translateY(-8px) rotate(-1deg); border-color: var(--accent); }
-.checkpoint__alt {
-  display: inline-block;
-  font-size: 0.8rem; letter-spacing: 0.15em;
-  color: #1a1a2e; background: var(--accent);
-  padding: 0.2rem 0.7rem; border-radius: 999px;
-  text-shadow: none;
-}
-.checkpoint h3 { font-size: 1.8rem; margin: 1rem 0 0.5rem; }
-.checkpoint p { color: var(--muted); }
-
-.trail {
-  position: absolute; bottom: 12vh; left: 10vw;
-  width: 80vw; height: 4px;
-  background: rgba(255, 255, 255, 0.2); border-radius: 2px;
-}
-.trail__fill {
-  height: 100%; background: var(--accent); border-radius: 2px;
-  transform-origin: left center;
-  transform: scaleX(var(--p));
-}
-.trail__hiker {
-  position: absolute; top: 50%; left: 0;
-  width: 18px; height: 18px; margin: -9px 0 0 -9px;
-  border-radius: 50%; background: #fff;
-  box-shadow: 0 0 0 6px rgba(255, 179, 71, 0.35), 0 0 20px var(--accent);
-  transform: translateX(calc(var(--p) * 80vw));
 }
 
-/* Chapter 4: summit */
-.summit {
-  min-height: 130vh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 8rem 1.5rem;
-  overflow-x: clip;
-}
-.summit__title { font-size: clamp(3rem, 10vw, 7rem); }
-
-.flag { position: relative; width: 90px; height: 120px; margin: 2rem auto; }
-.flag__pole { position: absolute; left: 0; bottom: 0; width: 4px; height: 100%; background: #eee; border-radius: 2px; }
-.flag__cloth {
-  position: absolute; left: 4px; top: 4px;
-  width: 70px; height: 44px;
-  background: linear-gradient(135deg, #ff7e5f, #ffb347);
-  transform-origin: left center;
-  animation: wave 1.2s ease-in-out infinite alternate;
-}
-@keyframes wave {
-  from { transform: skewY(-6deg) scaleX(0.92); }
-  to   { transform: skewY(6deg) scaleX(1); }
+.ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: #3c8d3c;
 }
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 1.2rem;
-  width: 100%; max-width: 900px;
-}
-.stat { padding: 1.6rem 1rem; }
-.stat__num { font-family: var(--font-display); font-size: 2.6rem; font-variant-numeric: tabular-nums; }
-.stat__unit { font-size: 1.2rem; margin-left: 0.2rem; color: var(--accent); }
-.stat p { color: var(--muted); font-size: 0.9rem; }
-
-/* Chapter 5: night */
-.night {
-  min-height: 150vh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 2.5rem; text-align: center; padding: 8rem 1.5rem;
-  overflow-x: clip;
-}
-.night__line { font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 2.6rem); }
-.night__line--big { font-size: clamp(2rem, 6vw, 4rem); line-height: 1.2; }
-
-.btn {
-  font: inherit; font-size: 1rem;
-  color: #1a1a2e; background: var(--accent);
-  border: 0; border-radius: 999px;
-  padding: 0.9rem 2rem; cursor: pointer;
-  transition: transform 0.3s var(--ease-out), box-shadow 0.3s;
-}
-.btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 10px 30px rgba(255, 179, 71, 0.45); }
-
-.footer {
-  text-align: center; padding: 3rem 1rem;
-  color: var(--muted); font-size: 0.85rem;
+/* ===== Section 2: Countdown ===== */
+#countdown h2 {
+  font-size: 40px;
 }
 
-/* ---------- Scroll reveal (IntersectionObserver adds .is-visible) ---------- */
+.numbers {
+  display: flex;
+  gap: 40px;
+  margin: 30px 0;
+}
+
+.numbers span {
+  font-size: 80px;
+  font-weight: bold;
+  color: orange;
+}
+
+/* each number shows up a little later than the one before */
+.numbers span:nth-child(2) {
+  transition-delay: 0.4s;
+}
+
+.numbers span:nth-child(3) {
+  transition-delay: 0.8s;
+}
+
+#countdown p {
+  max-width: 500px;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+/* ===== Text boxes ===== */
+.box {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 500px;
+  position: relative;
+  z-index: 2;
+}
+
+.box h2 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.box p {
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+/* ===== Section 3: Clouds ===== */
+.cloud {
+  position: absolute;
+  width: 250px;
+  opacity: 0.9;
+}
+
+/* ===== Section 4: Earth ===== */
+#earth {
+  width: 300px;
+  margin-bottom: 30px;
+}
+
+/* ===== Section 5: Moon ===== */
+#moon {
+  width: 350px;
+  margin-bottom: 30px;
+}
+
+/* ===== Section 6: Ending ===== */
+#ending h2 {
+  font-size: 34px;
+  max-width: 600px;
+  margin-bottom: 15px;
+}
+
+#top-button {
+  margin-top: 30px;
+  padding: 15px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 30px;
+  background: orange;
+  color: black;
+  cursor: pointer;
+}
+
+#top-button:hover {
+  background: #ffcc66;
+  transform: scale(1.1);
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+}
+
+/* ===== Reveal animation ===== */
+/* hidden and pushed down at first */
 .reveal {
   opacity: 0;
   transform: translateY(50px);
-  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
-  transition-delay: var(--d, 0ms);
-}
-.reveal--left  { transform: translateX(-80px); }
-.reveal--right { transform: translateX(80px); }
-.reveal--scale { transform: scale(0.8); }
-.reveal.is-visible { opacity: 1; transform: none; }
-/* keep hover lift working on stats after reveal */
-.stat.is-visible:hover { transform: translateY(-6px); transition-delay: 0ms; }
-
-/* ---------- Chapter dots ---------- */
-.dots {
-  position: fixed; right: 1.5rem; top: 50%; z-index: 10;
-  transform: translateY(-50%);
-  display: flex; flex-direction: column; gap: 1rem;
-}
-.dots a {
-  position: relative; display: block;
-  width: 12px; height: 12px; border-radius: 50%;
-  border: 2px solid #fff;
-  transition: background 0.3s, transform 0.3s var(--ease-out);
-}
-.dots a.active { background: #fff; transform: scale(1.3); }
-.dots a::before {
-  content: attr(data-label);
-  position: absolute; right: 24px; top: 50%;
-  transform: translate(8px, -50%);
-  white-space: nowrap; font-size: 0.8rem;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.3s, transform 0.3s;
-}
-.dots a:hover::before,
-.dots a:focus-visible::before { opacity: 1; transform: translate(0, -50%); }
-
-/* ---------- Responsive ---------- */
-@media (max-width: 700px) {
-  .dots { right: 0.6rem; gap: 0.8rem; }
-  .dots a { width: 10px; height: 10px; }
-  .dots a::before { display: none; }
-  .sun { width: 70px; height: 70px; }
-  .trees { width: 75%; }
-  .ridge__label { top: 9vh; }
-  .cloud__inner { transform: scale(0.7); }
+  transition: opacity 1s, transform 1s;
 }
 
-/* ---------- Reduced motion ---------- */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation: none !important; }
-  .reveal { opacity: 1; transform: none; transition: none; }
-  .words span { opacity: 1; transform: none; }
+/* script.js adds the "show" class when the element is on screen */
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== Smaller screens ===== */
+@media (max-width: 600px) {
+  .title {
+    font-size: 38px;
+  }
+
+  .numbers span {
+    font-size: 55px;
+  }
+
+  .cloud {
+    width: 150px;
+  }
+
+  #earth,
+  #moon {
+    width: 220px;
+  }
 }
