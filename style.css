@@ -1,4 +1,10 @@
 /* ===== Basic setup ===== */
+:root {
+  --accent: #ffb13b;
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.2);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,13 +16,14 @@ html {
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Poppins", Arial, sans-serif;
   color: white;
   overflow-x: hidden;
 }
 
 h1, h2 {
-  font-family: "Trebuchet MS", sans-serif;
+  font-family: "Orbitron", sans-serif;
+  letter-spacing: 2px;
 }
 
 section {
@@ -31,8 +38,16 @@ section {
   overflow: hidden;
 }
 
+/* small uppercase text above headings */
+.label {
+  font-size: 13px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
 /* ===== Background layers ===== */
-/* The sky is always there. The space layer and stars fade in as you scroll (see script.js) */
 .sky,
 .space,
 .stars {
@@ -43,19 +58,19 @@ section {
   height: 100%;
 }
 
+/* sunrise sky */
 .sky {
-  background: linear-gradient(#4a90e2, #a7d3f5);
-  z-index: -3;
+  background: linear-gradient(#1e3c72 0%, #5a7fc4 45%, #f5a36c 85%, #ffd29d 100%);
+  z-index: -4;
 }
 
 .space {
-  background: linear-gradient(#000010, #0d0d35);
+  background: radial-gradient(circle at 70% 30%, #1b1f4b 0%, #07071a 60%, #000 100%);
   opacity: 0;
-  z-index: -2;
+  z-index: -3;
 }
 
 .stars {
-  /* small white dots made with radial gradients */
   background-image:
     radial-gradient(2px 2px at 20px 30px, white, transparent),
     radial-gradient(2px 2px at 150px 80px, white, transparent),
@@ -64,7 +79,18 @@ section {
     radial-gradient(1px 1px at 260px 40px, white, transparent);
   background-size: 300px 220px;
   opacity: 0;
-  z-index: -1;
+  z-index: -2;
+  animation: twinkle 3s infinite alternate;
+}
+
+.stars-small {
+  background-size: 180px 160px;
+  animation-delay: 1.5s;
+}
+
+@keyframes twinkle {
+  from { filter: brightness(0.6); }
+  to   { filter: brightness(1.3); }
 }
 
 /* ===== Progress bar ===== */
@@ -72,171 +98,274 @@ section {
   position: fixed;
   top: 0;
   left: 0;
-  height: 5px;
+  height: 4px;
   width: 0%;
-  background: orange;
+  background: linear-gradient(90deg, #ffd29d, var(--accent), #ff6b6b);
+  box-shadow: 0 0 10px var(--accent);
   z-index: 10;
 }
 
 /* ===== Section 1: Launch ===== */
+#launch {
+  justify-content: flex-start;
+  padding-top: 18vh;
+}
+
 .title {
-  font-size: 60px;
-  margin-bottom: 10px;
+  font-size: 64px;
+  line-height: 1.1;
+  margin-bottom: 15px;
+  text-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+  animation: fadeUp 1.2s ease-out;
 }
 
 .subtitle {
   font-size: 20px;
-  margin-bottom: 200px;
+  font-weight: 300;
+  opacity: 0.9;
+  animation: fadeUp 1.2s ease-out 0.3s both;
 }
 
-#rocket {
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.scroll-hint {
+  margin-top: 30px;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: fadeUp 1.2s ease-out 0.6s both;
+}
+
+.arrow {
+  width: 14px;
+  height: 14px;
+  margin: 10px auto 0;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(45deg);
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50%      { transform: translateY(8px) rotate(45deg); }
+}
+
+/* rolling hills made from big rounded boxes */
+.hill {
   position: absolute;
+  left: -10%;
+  width: 120%;
+  border-radius: 50% 50% 0 0;
+}
+
+.hill-back {
   bottom: 60px;
+  height: 180px;
+  background: #3d5a80;
+}
+
+.hill-front {
+  bottom: -40px;
+  height: 160px;
+  background: #1a2a40;
+}
+
+.rocket-wrap {
+  position: absolute;
+  bottom: 55px;
   left: 50%;
   width: 90px;
   margin-left: -45px;
   z-index: 2;
 }
 
-.ground {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.rocket-wrap img {
   width: 100%;
-  height: 80px;
-  background: #3c8d3c;
+  display: block;
+}
+
+/* flickering glow under the rocket */
+.flame {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  width: 40px;
+  height: 50px;
+  margin-left: -20px;
+  background: radial-gradient(circle, #fff3a0 0%, var(--accent) 40%, transparent 70%);
+  border-radius: 50%;
+  animation: flicker 0.15s infinite alternate;
+}
+
+@keyframes flicker {
+  from { transform: scale(0.9); opacity: 0.8; }
+  to   { transform: scale(1.15); opacity: 1; }
 }
 
 /* ===== Section 2: Countdown ===== */
-#countdown h2 {
-  font-size: 40px;
-}
-
 .numbers {
   display: flex;
-  gap: 40px;
-  margin: 30px 0;
+  gap: 50px;
+  margin: 20px 0 40px;
 }
 
 .numbers span {
-  font-size: 80px;
-  font-weight: bold;
-  color: orange;
+  font-family: "Orbitron", sans-serif;
+  font-size: 100px;
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 0 30px rgba(255, 177, 59, 0.6);
 }
 
-/* each number shows up a little later than the one before */
-.numbers span:nth-child(2) {
-  transition-delay: 0.4s;
-}
+/* each number appears a little after the one before */
+.numbers span:nth-child(2) { transition-delay: 0.4s; }
+.numbers span:nth-child(3) { transition-delay: 0.8s; }
 
-.numbers span:nth-child(3) {
-  transition-delay: 0.8s;
-}
-
-#countdown p {
-  max-width: 500px;
+.story {
+  max-width: 520px;
   font-size: 20px;
-  line-height: 1.5;
+  font-weight: 300;
+  line-height: 1.6;
 }
 
-/* ===== Text boxes ===== */
+/* ===== Glass text boxes ===== */
 .box {
-  background: rgba(0, 0, 0, 0.4);
-  padding: 30px;
-  border-radius: 15px;
-  max-width: 500px;
   position: relative;
   z-index: 2;
+  max-width: 520px;
+  padding: 35px;
+  border-radius: 20px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .box h2 {
-  font-size: 36px;
-  margin-bottom: 10px;
+  font-size: 34px;
+  margin-bottom: 12px;
 }
 
 .box p {
-  font-size: 18px;
-  line-height: 1.5;
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.6;
 }
 
 /* ===== Section 3: Clouds ===== */
 .cloud {
   position: absolute;
-  width: 250px;
-  opacity: 0.9;
+  width: 260px;
+  opacity: 0.85;
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.15));
+}
+
+.cloud-small {
+  width: 170px;
+  opacity: 0.6;
 }
 
 /* ===== Section 4: Earth ===== */
 #earth {
   width: 300px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 60px rgba(74, 163, 223, 0.6);
 }
 
 /* ===== Section 5: Moon ===== */
 #moon {
-  width: 350px;
-  margin-bottom: 30px;
+  width: 340px;
+  margin-bottom: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 80px rgba(255, 255, 255, 0.35);
 }
 
 /* ===== Section 6: Ending ===== */
-#ending h2 {
+.quote {
   font-size: 34px;
-  max-width: 600px;
+  max-width: 650px;
+  line-height: 1.4;
   margin-bottom: 15px;
 }
 
 #top-button {
-  margin-top: 30px;
-  padding: 15px 30px;
-  font-size: 18px;
+  margin-top: 35px;
+  padding: 15px 35px;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
   border: none;
   border-radius: 30px;
-  background: orange;
-  color: black;
+  background: var(--accent);
+  color: #1a1a2e;
   cursor: pointer;
+  box-shadow: 0 5px 20px rgba(255, 177, 59, 0.4);
 }
 
-#top-button:hover {
-  background: #ffcc66;
-  transform: scale(1.1);
+#top-button.show:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 177, 59, 0.6);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 footer {
   text-align: center;
-  padding: 20px;
-  font-size: 14px;
+  padding: 25px;
+  font-size: 13px;
+  opacity: 0.6;
 }
 
 /* ===== Reveal animation ===== */
-/* hidden and pushed down at first */
 .reveal {
   opacity: 0;
-  transform: translateY(50px);
-  transition: opacity 1s, transform 1s;
+  transform: translateY(50px) scale(0.95);
+  transition: opacity 1s ease, transform 1s ease;
 }
 
-/* script.js adds the "show" class when the element is on screen */
+/* script.js adds "show" when the element is on screen */
 .reveal.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
 /* ===== Smaller screens ===== */
 @media (max-width: 600px) {
   .title {
-    font-size: 38px;
+    font-size: 36px;
+  }
+
+  .numbers {
+    gap: 25px;
   }
 
   .numbers span {
-    font-size: 55px;
+    font-size: 64px;
   }
 
   .cloud {
-    width: 150px;
+    width: 160px;
+  }
+
+  .cloud-small {
+    width: 110px;
   }
 
   #earth,
   #moon {
     width: 220px;
+  }
+
+  .quote {
+    font-size: 24px;
+  }
+
+  .box {
+    padding: 25px;
   }
 }
