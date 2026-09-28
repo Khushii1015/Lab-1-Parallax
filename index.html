@@ -3,205 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The Climb — a single-page scrolling story told from dawn to nightfall using parallax, motion and progressive reveal.">
-  <title>The Climb — A Scrolling Story</title>
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <title>Mission to the Moon</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <a class="skip-link" href="#chapter-1">Skip to the story</a>
 
-  <!-- Reading progress bar (driven by scroll) -->
-  <div class="progress" aria-hidden="true"><div class="progress__bar"></div></div>
+  <!-- Background layers (these stay fixed behind everything) -->
+  <div class="sky"></div>
+  <div class="space"></div>
+  <div class="stars"></div>
 
-  <!-- ============ FIXED LAYERED SCENE (behind all content) ============ -->
-  <div class="scene" aria-hidden="true">
-    <!-- Sky layers cross-fade from dawn → day → dusk → night -->
-    <div class="sky sky--dawn"></div>
-    <div class="sky sky--day"></div>
-    <div class="sky sky--dusk"></div>
-    <div class="sky sky--night"></div>
+  <!-- Progress bar at the top -->
+  <div id="progress"></div>
 
-    <div class="stars"></div>
-    <div class="sun"></div>
-    <div class="moon"></div>
+  <!-- Section 1: Launch pad -->
+  <section id="launch">
+    <h1 class="title">Mission to the Moon</h1>
+    <p class="subtitle">Scroll down to start the journey</p>
+    <img src="images/rocket.svg" alt="Rocket on the launch pad" id="rocket">
+    <div class="ground"></div>
+  </section>
 
-    <!-- Clouds drift horizontally with scroll -->
-    <div class="cloud" data-drift="-0.12" style="--top:14%; --base:10;"><div class="cloud__inner"></div></div>
-    <div class="cloud cloud--small" data-drift="0.08" style="--top:28%; --base:55;"><div class="cloud__inner"></div></div>
-    <div class="cloud" data-drift="-0.2" style="--top:40%; --base:80;"><div class="cloud__inner"></div></div>
-
-    <!-- Mountain layers: each sinks at a different speed (parallax) -->
-    <svg class="mountain mountain--far" data-speed="0.15" viewBox="0 0 1440 400" preserveAspectRatio="none">
-      <path d="M0,400 L0,220 L120,150 L260,210 L400,110 L560,200 L720,70 L880,190 L1040,120 L1200,200 L1320,140 L1440,190 L1440,400 Z"/>
-    </svg>
-    <svg class="mountain mountain--mid" data-speed="0.35" viewBox="0 0 1440 400" preserveAspectRatio="none">
-      <path d="M0,400 L0,260 L180,180 L320,250 L480,170 L640,260 L820,160 L980,250 L1140,190 L1300,260 L1440,210 L1440,400 Z"/>
-    </svg>
-    <svg class="mountain mountain--near" data-speed="0.6" viewBox="0 0 1440 400" preserveAspectRatio="none">
-      <path d="M0,400 L0,300 L200,240 L380,310 L560,250 L760,320 L960,260 L1160,320 L1340,270 L1440,300 L1440,400 Z"/>
-    </svg>
-    <svg class="mountain mountain--front" data-speed="0.9" viewBox="0 0 1440 400" preserveAspectRatio="none">
-      <path d="M0,400 L0,350 Q360,300 720,350 T1440,340 L1440,400 Z"/>
-    </svg>
-  </div>
-
-  <!-- Reusable pine tree shape -->
-  <svg width="0" height="0" class="defs" aria-hidden="true">
-    <symbol id="pine" viewBox="0 0 100 200">
-      <rect x="45" y="160" width="10" height="40"/>
-      <polygon points="50,0 80,60 20,60"/>
-      <polygon points="50,35 90,110 10,110"/>
-      <polygon points="50,80 100,170 0,170"/>
-    </symbol>
-  </svg>
-
-  <!-- Chapter navigation dots -->
-  <nav class="dots" aria-label="Chapters">
-    <a href="#hero" data-label="Start" aria-label="Start"></a>
-    <a href="#chapter-1" data-label="Before Dawn" aria-label="Chapter 1: Before Dawn"></a>
-    <a href="#chapter-2" data-label="The Forest" aria-label="Chapter 2: The Forest"></a>
-    <a href="#chapter-3" data-label="The Ridge" aria-label="Chapter 3: The Ridge"></a>
-    <a href="#chapter-4" data-label="The Summit" aria-label="Chapter 4: The Summit"></a>
-    <a href="#chapter-5" data-label="Nightfall" aria-label="Chapter 5: Nightfall"></a>
-  </nav>
-
-  <!-- ============ HERO ============ -->
-  <header id="hero" class="hero" data-chapter>
-    <div class="hero__content" data-speed="0.45" data-fade>
-      <p class="eyebrow">A story in five chapters</p>
-      <h1 class="hero__title">The Climb</h1>
-      <p class="hero__subtitle">From the first step in the dark to the last light on the summit.</p>
+  <!-- Section 2: Countdown -->
+  <section id="countdown">
+    <h2 class="reveal">Countdown</h2>
+    <div class="numbers">
+      <span class="reveal">3</span>
+      <span class="reveal">2</span>
+      <span class="reveal">1</span>
     </div>
-    <div class="scroll-hint" data-fade>
-      <span>Scroll to begin</span>
-      <span class="scroll-hint__mouse"><span></span></span>
+    <p class="reveal">Maya had dreamed about this moment since she was seven years old. Now she was strapped in, and the engines were starting.</p>
+  </section>
+
+  <!-- Section 3: Through the clouds -->
+  <section id="clouds">
+    <img src="images/cloud.svg" alt="" class="cloud" data-speed="0.3" style="top: 10%; left: 5%;">
+    <img src="images/cloud.svg" alt="" class="cloud" data-speed="-0.2" style="top: 45%; left: 60%;">
+    <img src="images/cloud.svg" alt="" class="cloud" data-speed="0.5" style="top: 70%; left: 15%;">
+    <div class="box reveal">
+      <h2>Liftoff!</h2>
+      <p>The rocket shook as it pushed through the clouds. The blue sky slowly got darker and darker.</p>
     </div>
-  </header>
+  </section>
 
-  <main>
-    <!-- ============ CHAPTER 1: word-by-word progressive reveal ============ -->
-    <section id="chapter-1" class="pin pin--words" data-chapter>
-      <div class="pin__sticky">
-        <div class="chapter-intro">
-          <p class="eyebrow">Chapter 1 · Before Dawn</p>
-          <p class="words" data-words>
-            The alarm rang at 4 a.m. The trailhead was cold, dark and silent. You tightened your laces,
-            switched on your headlamp, and took the first step toward a summit you couldn't even see.
-          </p>
-        </div>
-      </div>
-    </section>
+  <!-- Section 4: Leaving Earth -->
+  <section id="space">
+    <img src="images/earth.svg" alt="Planet Earth" id="earth">
+    <div class="box reveal">
+      <h2>Into Space</h2>
+      <p>Maya looked out the window. Earth was getting smaller and smaller. Everything she had ever known fit in one small circle.</p>
+    </div>
+  </section>
 
-    <!-- ============ CHAPTER 2: trees part as you scroll ============ -->
-    <section id="chapter-2" class="pin pin--forest" data-chapter>
-      <div class="pin__sticky forest">
-        <div class="forest__text">
-          <p class="eyebrow">Chapter 2 · The Forest</p>
-          <h2>Into the pines</h2>
-          <p>The trees closed in around you, tall and patient. Every step was roots and needles and
-            the sound of your own breathing. Then the light found its way through, and the forest opened.</p>
-        </div>
+  <!-- Section 5: The Moon -->
+  <section id="moon-section">
+    <img src="images/moon.svg" alt="The Moon" id="moon">
+    <div class="box reveal">
+      <h2>The Landing</h2>
+      <p>Three days later, the rocket touched down. Maya stepped outside and left the first footprint of her mission on the Moon.</p>
+    </div>
+  </section>
 
-        <svg class="trees trees--left" viewBox="0 0 400 600" preserveAspectRatio="xMidYMax meet">
-          <use href="#pine" x="-40" y="120" width="220" height="480" class="pine-dark"/>
-          <use href="#pine" x="90"  y="220" width="180" height="380" class="pine-mid"/>
-          <use href="#pine" x="200" y="60"  width="240" height="540" class="pine-dark"/>
-          <use href="#pine" x="300" y="260" width="150" height="340" class="pine-mid"/>
-        </svg>
-        <svg class="trees trees--right" viewBox="0 0 400 600" preserveAspectRatio="xMidYMax meet">
-          <use href="#pine" x="-40" y="160" width="220" height="440" class="pine-mid"/>
-          <use href="#pine" x="100" y="40"  width="250" height="560" class="pine-dark"/>
-          <use href="#pine" x="230" y="200" width="190" height="400" class="pine-mid"/>
-          <use href="#pine" x="310" y="100" width="200" height="500" class="pine-dark"/>
-        </svg>
-      </div>
-    </section>
+  <!-- Section 6: The end -->
+  <section id="ending">
+    <h2 class="reveal">"The Earth looks so small from up here."</h2>
+    <p class="reveal">— Maya, Moon Mission Commander</p>
+    <button id="top-button" class="reveal">Back to Earth ↑</button>
+  </section>
 
-    <!-- ============ CHAPTER 3: horizontal scroll ridge ============ -->
-    <section id="chapter-3" class="pin pin--ridge" data-chapter>
-      <div class="pin__sticky ridge">
-        <p class="eyebrow ridge__label">Chapter 3 · The Ridge</p>
-
-        <div class="ridge__track">
-          <article class="checkpoint">
-            <span class="checkpoint__alt">1,200 m</span>
-            <h3>The Switchbacks</h3>
-            <p>Forty-two hairpin turns. You stopped counting at nineteen and started counting breaths instead.</p>
-          </article>
-          <article class="checkpoint">
-            <span class="checkpoint__alt">2,100 m</span>
-            <h3>The Treeline</h3>
-            <p>The forest thinned, then vanished. For the first time, you could see how far you'd come.</p>
-          </article>
-          <article class="checkpoint">
-            <span class="checkpoint__alt">2,900 m</span>
-            <h3>The Scramble</h3>
-            <p>Hands on cold rock. Slow, careful, deliberate. The wind picked up and so did your heartbeat.</p>
-          </article>
-          <article class="checkpoint">
-            <span class="checkpoint__alt">3,600 m</span>
-            <h3>The False Summit</h3>
-            <p>You thought it was the top. It wasn't. You sat down, ate an orange, and stood back up.</p>
-          </article>
-          <article class="checkpoint">
-            <span class="checkpoint__alt">4,392 m</span>
-            <h3>The Last Push</h3>
-            <p>Every step felt like three. But the sky was getting bigger, and the ground was running out.</p>
-          </article>
-        </div>
-
-        <div class="trail" aria-hidden="true">
-          <div class="trail__fill"></div>
-          <div class="trail__hiker"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ CHAPTER 4: summit + counters ============ -->
-    <section id="chapter-4" class="summit" data-chapter>
-      <p class="eyebrow reveal">Chapter 4 · The Summit</p>
-      <h2 class="summit__title reveal reveal--scale">You made it.</h2>
-
-      <div class="flag reveal" aria-hidden="true">
-        <div class="flag__pole"></div>
-        <div class="flag__cloth"></div>
-      </div>
-
-      <div class="stats">
-        <div class="stat card reveal" style="--d:0ms">
-          <span class="stat__num" data-count="4392">0</span><span class="stat__unit">m</span>
-          <p>Elevation reached</p>
-        </div>
-        <div class="stat card reveal" style="--d:120ms">
-          <span class="stat__num" data-count="18400">0</span>
-          <p>Steps taken</p>
-        </div>
-        <div class="stat card reveal" style="--d:240ms">
-          <span class="stat__num" data-count="11">0</span><span class="stat__unit">h</span>
-          <p>Hours on the trail</p>
-        </div>
-        <div class="stat card reveal" style="--d:360ms">
-          <span class="stat__num" data-count="1">0</span>
-          <p>Orange, well earned</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ CHAPTER 5: nightfall ============ -->
-    <section id="chapter-5" class="night" data-chapter>
-      <p class="eyebrow reveal">Chapter 5 · Nightfall</p>
-      <p class="night__line reveal reveal--left">The sun slipped below the ridge.</p>
-      <p class="night__line reveal reveal--right" style="--d:150ms">One by one, the stars came out.</p>
-      <p class="night__line night__line--big reveal reveal--scale" style="--d:300ms">
-        The mountain didn't get smaller.<br>You got bigger.
-      </p>
-      <button class="btn reveal" style="--d:450ms" id="back-to-top" type="button">Climb again ↑</button>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>The Climb · Built with plain HTML, CSS &amp; JavaScript — no libraries.</p>
+  <footer>
+    <p>Made by Khushi for CCT360</p>
   </footer>
 
   <script src="script.js"></script>
