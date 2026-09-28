@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200">
+  <!-- flame -->
+  <path d="M38 160 Q50 200 62 160 Z" fill="#ffb13b"/>
+  <path d="M43 160 Q50 185 57 160 Z" fill="#fff3a0"/>
+  <!-- fins -->
+  <path d="M30 120 L10 165 L32 155 Z" fill="#e94b3c"/>
+  <path d="M70 120 L90 165 L68 155 Z" fill="#e94b3c"/>
+  <!-- body -->
+  <path d="M50 5 C75 40 72 110 68 160 L32 160 C28 110 25 40 50 5 Z" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+  <!-- nose -->
+  <path d="M50 5 C60 18 64 30 66 40 L34 40 C36 30 40 18 50 5 Z" fill="#e94b3c"/>
+  <!-- window -->
+  <circle cx="50" cy="75" r="12" fill="#4aa3df" stroke="#777" stroke-width="3"/>
+</svg>
