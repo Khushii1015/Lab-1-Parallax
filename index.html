@@ -4,45 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mission to the Moon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Background layers (these stay fixed behind everything) -->
+  <!-- Background layers (fixed behind everything) -->
   <div class="sky"></div>
   <div class="space"></div>
   <div class="stars"></div>
+  <div class="stars stars-small"></div>
 
-  <!-- Progress bar at the top -->
+  <!-- Progress bar -->
   <div id="progress"></div>
 
   <!-- Section 1: Launch pad -->
   <section id="launch">
+    <p class="label">Kennedy Space Center · 06:00</p>
     <h1 class="title">Mission to the Moon</h1>
-    <p class="subtitle">Scroll down to start the journey</p>
-    <img src="images/rocket.svg" alt="Rocket on the launch pad" id="rocket">
-    <div class="ground"></div>
+    <p class="subtitle">One girl. One rocket. 384,400 km to go.</p>
+
+    <div class="scroll-hint">
+      <span>Scroll to launch</span>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- Hills move at different speeds for a parallax effect -->
+    <div class="hill hill-back" data-speed="0.3"></div>
+    <div class="hill hill-front" data-speed="0.1"></div>
+
+    <div class="rocket-wrap" id="rocket">
+      <img src="images/rocket.svg" alt="Rocket on the launch pad">
+      <div class="flame"></div>
+    </div>
   </section>
 
   <!-- Section 2: Countdown -->
   <section id="countdown">
-    <h2 class="reveal">Countdown</h2>
+    <p class="label reveal">T-minus</p>
     <div class="numbers">
       <span class="reveal">3</span>
       <span class="reveal">2</span>
       <span class="reveal">1</span>
     </div>
-    <p class="reveal">Maya had dreamed about this moment since she was seven years old. Now she was strapped in, and the engines were starting.</p>
+    <p class="story reveal">Maya had dreamed about this moment since she was seven years old. Now she was strapped in, heart racing, as the engines began to roar.</p>
   </section>
 
   <!-- Section 3: Through the clouds -->
   <section id="clouds">
     <img src="images/cloud.svg" alt="" class="cloud" data-speed="0.3" style="top: 10%; left: 5%;">
-    <img src="images/cloud.svg" alt="" class="cloud" data-speed="-0.2" style="top: 45%; left: 60%;">
-    <img src="images/cloud.svg" alt="" class="cloud" data-speed="0.5" style="top: 70%; left: 15%;">
+    <img src="images/cloud.svg" alt="" class="cloud cloud-small" data-speed="-0.2" style="top: 40%; left: 65%;">
+    <img src="images/cloud.svg" alt="" class="cloud" data-speed="0.5" style="top: 72%; left: 15%;">
     <div class="box reveal">
+      <p class="label">Altitude: 12 km</p>
       <h2>Liftoff!</h2>
-      <p>The rocket shook as it pushed through the clouds. The blue sky slowly got darker and darker.</p>
+      <p>The rocket shook as it pushed through the clouds. Outside the window, the bright blue sky slowly faded into something darker.</p>
     </div>
   </section>
 
@@ -50,8 +68,9 @@
   <section id="space">
     <img src="images/earth.svg" alt="Planet Earth" id="earth">
     <div class="box reveal">
+      <p class="label">Altitude: 400 km</p>
       <h2>Into Space</h2>
-      <p>Maya looked out the window. Earth was getting smaller and smaller. Everything she had ever known fit in one small circle.</p>
+      <p>Maya pressed her hand against the glass. Earth was getting smaller and smaller. Everything she had ever known now fit inside one small blue circle.</p>
     </div>
   </section>
 
@@ -59,14 +78,15 @@
   <section id="moon-section">
     <img src="images/moon.svg" alt="The Moon" id="moon">
     <div class="box reveal">
+      <p class="label">Day 3 · Touchdown</p>
       <h2>The Landing</h2>
-      <p>Three days later, the rocket touched down. Maya stepped outside and left the first footprint of her mission on the Moon.</p>
+      <p>The engines went quiet. Maya opened the hatch, stepped onto the grey dust, and left the first footprint of her mission on the Moon.</p>
     </div>
   </section>
 
   <!-- Section 6: The end -->
   <section id="ending">
-    <h2 class="reveal">"The Earth looks so small from up here."</h2>
+    <h2 class="quote reveal">"The Earth looks so small from up here."</h2>
     <p class="reveal">— Maya, Moon Mission Commander</p>
     <button id="top-button" class="reveal">Back to Earth ↑</button>
   </section>
